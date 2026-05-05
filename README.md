@@ -1,9 +1,9 @@
-# API Template — Web API em .NET 8
+# Web API Template — .NET 8
 
 ## Visão geral
-Este repositório contém um template de API REST construída com ASP.NET Core (.NET 8). O projeto já vem estruturado com camadas simples (Controllers → Services → Repositories), injeção de dependência, logging com Serilog, configuração via `appsettings.json` e Swagger opcional para documentação e testes.
+Este repositório contém um template de API REST construída com ASP.NET Core (.NET 8). O projeto já vem estruturado com injeção de dependência, logging com Serilog, configuração via `appsettings.json` e Swagger opcional para documentação e testes.
 
-O propósito é criar um "esqueleto" que sirva como base para a criação de APIs que sigam um padrão tanto de implementação quanto de configuração e logging.
+O propósito é criar um "esqueleto"de Web APIs que sirva como um padrão de implementação, configuração e logging.
 
 Endpoint de exemplo disponível:
 - `GET /api/v1/test` → retorna uma lista de usuários da API de teste `jsonplaceholder.typicode.com`.
@@ -18,27 +18,20 @@ Endpoint de exemplo disponível:
 - Serilog: Responsável por fazer a escrita em arquivos de Log.
 
 ## Estrutura do projeto
-- `APITemplate.Host`:
-    - **Responsibilidade**: É o projeto ponto de entrada executável (`.exe`). Ele monta e executa a aplicação.
-    - **Contém**: Todas as pastas das classes usadas pela API além do Program.cs com a configuração essencial para iniciar a aplicação.
+O projeto divide suas responsabilidades da seguinte forma:
 
+- `src/WebAPITemplate.Api`:
+  - **Responsabilidade**: Camada de Apresentação e ponto de entrada (`Program.cs`, `.exe`). Centraliza a injeção de dependências e expõe os endpoints via Controllers. Usa os projetos Application e Infrastructure como referência.
 
-## Arquitetura e padrões de projeto
-- Hospedagem e pipeline
-    - Usa o `WebApplication` (minimal hosting) do ASP.NET Core.
-    - Middlewares: ExceptionHandlerMiddleware, HTTPS redirection, Authorization (sem políticas ativas por padrão) e mapeamento de controllers.
-    - Swagger/UI habilitado condicionalmente via configuração.
+- `src/WebAPITemplate.Application`:
+  - **Responsabilidade**: Casos de uso da aplicação. Contém abstrações de serviços, clientes externos, e os Mappers e DTOs de transporte que fluem de e para a API. Usa o projeto Domain como referência.
 
-- Injeção de dependência
-    - `IService.cs` → `Service.cs` registrado como `Scoped`.
-    - Camadas separadas para facilitar testes e evolução.
+- `src/WebAPITemplate.Domain`:
+  - **Responsabilidade**: Entidades de núcleo e regras de negócio absolutas, além das exceções de uso geral (`NotFoundException`, `ConflictException`, etc).
 
-- Logging (Serilog)
-    - Logs em console e arquivo rolling diário em `logs/system_log_.txt`, a pasta com os logs fica no diretório base da aplicação.
-    - Em falhas na inicialização, um arquivo é escrito pelo bootstrap logger para garantir rastreabilidade mesmo antes do logger oficial ser iniciado.
+- `src/WebAPITemplate.Infrastructure`:
+  - **Responsabilidade**: Implementação dos contratos definidos em Application/Domain (Ex: banco de dados, Clients, etc). Usa o projeto Application como referência.
 
-- Tratamento de erros
-    - Exceções em endpoints são capturadas pelo ExceptionHandlerMiddleware que analisa o status code da requisição e retorna a resposta adequada ao cliente.
 
 ## Endpoints
 - `GET /api/v1/Test`
@@ -62,7 +55,7 @@ Configuração específica para ambiente de produção:
 - Usado quando `ASPNETCORE_ENVIRONMENT=Production`.
 
 ### Perfis de execução (local)
-Definidos em `API.Host/Properties/launchSettings.json`:
+Definidos em `src/WebAPITemplate.Api/Properties/launchSettings.json`:
 - HTTPS: `https://localhost:5001`
 - Ambiente padrão: `ASPNETCORE_ENVIRONMENT=Development`
 
