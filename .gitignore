@@ -407,3 +407,6 @@ StartupErrors/
 
 # Arquivos HTTP de teste (opcional - descomente se quiser versioná-los)
 # *.http
+
+# Ignorar configurações locais do GitHub (como instruções do Copilot)
+.github/
