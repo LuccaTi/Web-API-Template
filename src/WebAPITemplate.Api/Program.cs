@@ -26,7 +26,7 @@ namespace APITemplate.Host
                 shared: true);
 
             Log.Logger = loggerConfiguration.CreateBootstrapLogger();
-            Log.Information("API Template, Starting up");
+            Log.Information("WEB API Template, Starting up");
 
             try
             {
