@@ -53,9 +53,6 @@ namespace APITemplate.Host
                 builder.Services.AddScoped<IService, Service>();
                 Log.Information("Services scope added");
 
-                builder.Services.AddAutoMapper(typeof(Program).Assembly);
-                Log.Information("AutoMapper added");
-
                 builder.Services.AddControllers();
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
