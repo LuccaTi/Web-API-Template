@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using WebAPITemplate.Application.Interfaces.Clients;
+using WebAPITemplate.Application.Models;
 using WebAPITemplate.Infrastructure.Clients.Internal;
 
 namespace WebAPITemplate.Infrastructure.Clients
@@ -14,19 +15,14 @@ namespace WebAPITemplate.Infrastructure.Clients
             _logger = logger;
         }
 
-        public async Task<List<object>> GetAllAsync()
+        public async Task<IEnumerable<UserModel>> GetAllAsync()
         {
-            var obj = await base.GetAllAsync<object>("users");
-            return obj;
+            return await base.GetAllAsync<UserModel>("users");
         }
 
-        public async Task<object> GetByIdAsync(long id)
+        public async Task<UserModel?> GetByIdAsync(long id)
         {
-            var obj = await base.GetByIdAsync<object>($"users/{id}");
-            if (obj == null)
-                obj = new object();
-
-            return obj;
+            return await base.GetByIdAsync<UserModel>($"users/{id}");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using WebAPITemplate.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using WebAPITemplate.Application.DTOs.Requests;
 
 namespace APITemplate.Host.Controllers
 {
@@ -7,9 +8,9 @@ namespace APITemplate.Host.Controllers
     [Route("api/v1/[controller]")]
     public class TestController : ControllerBase
     {
-        private readonly IService _service;
+        private readonly IUserService _service;
 
-        public TestController(IService service)
+        public TestController(IUserService service)
         {
             _service = service;
         }
@@ -25,7 +26,8 @@ namespace APITemplate.Host.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(long id)
         {
-            var message = await _service.GetByIdAsync(id);
+            var request = new GetUserByIdRequestDto { Id = id };
+            var message = await _service.GetByIdAsync(request);
             return Ok(message);
         }
     }

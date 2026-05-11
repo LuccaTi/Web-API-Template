@@ -8,6 +8,9 @@ using Serilog;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using WebAPITemplate.Application.Mappings;
+using FluentValidation;
+using WebAPITemplate.Application.Validations;
 
 namespace APITemplate.Host
 {
@@ -50,7 +53,13 @@ namespace APITemplate.Host
                 });
                 Log.Information("Clients added");
 
-                builder.Services.AddScoped<IService, Service>();
+                builder.Services.AddValidatorsFromAssemblyContaining<GetUserByIdRequestValidator>();
+                Log.Information("Fluent validation added");
+
+                MappingConfig.RegisterMappings();
+                Log.Information("Mapster added");
+
+                builder.Services.AddScoped<IUserService, UserService>();
                 Log.Information("Services scope added");
 
                 builder.Services.AddControllers();

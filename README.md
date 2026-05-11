@@ -13,18 +13,20 @@ Endpoint de exemplo disponível:
 - .NET 8 (ASP.NET Core)
 - HttpClient: Biblioteca que faz as requisições e os tratamentos Http.
 - Swashbuckle.AspNetCore (Swagger/OpenAPI)
-- AutoMapper: Biblioteca usada para mapear os objetos consumidos em objetos criados pela API.
+- Mapster: Biblioteca usada para mapear os objetos trafegados entre as camadas.
+- FluentValidation: Biblioteca para construção de regras de validação fortemente tipadas (validando os DTOs).
 - Microsoft.Extensions.Configuration: Responsável por fazer leitura e escrita de arquivos de configuração.
 - Serilog: Responsável por fazer a escrita em arquivos de Log.
+- xUnit & Moq: Utilizados no projeto de testes automatizados para garantir a qualidade de componentes (ex: testes de serviços).
 
 ## Estrutura do projeto
 O projeto divide suas responsabilidades da seguinte forma:
 
 - `src/WebAPITemplate.Api`:
-  - **Responsabilidade**: Camada de Apresentação e ponto de entrada (`Program.cs`, `.exe`). Centraliza a injeção de dependências e expõe os endpoints via Controllers. Usa os projetos Application e Infrastructure como referência.
+  - **Responsabilidade**: Camada de Apresentação e ponto de entrada (`Program.cs`, `.exe`). Centraliza a injeção de dependências, registra middlewares (ex: `ExceptionHandlerMiddleware` preparado para falhas de validação fluente) e expõe os endpoints via Controllers. Usa os projetos Application e Infrastructure como referência.
 
 - `src/WebAPITemplate.Application`:
-  - **Responsabilidade**: Casos de uso da aplicação. Contém abstrações de serviços, clientes externos, e os Mappers e DTOs de transporte que fluem de e para a API. Usa o projeto Domain como referência.
+  - **Responsabilidade**: Casos de uso da aplicação. Contém abstrações de serviços, clientes externos, Mappers (`Mapster`), regras de validação (`FluentValidation`) e os DTOs de transporte que fluem de e para a API. Usa o projeto Domain como referência.
 
 - `src/WebAPITemplate.Domain`:
   - **Responsabilidade**: Entidades de núcleo e regras de negócio absolutas, além das exceções de uso geral (`NotFoundException`, `ConflictException`, etc).
@@ -61,3 +63,7 @@ Definidos em `src/WebAPITemplate.Api/Properties/launchSettings.json`:
 
 ## Uso da API
 A API pode ser usada via console ao compilar o código e usar o .exe dentro do terminal, vale tanto para uso em Debug quanto Release.
+
+## Testes Automatizados
+O repositório inclui testes unitários, estruturados no projeto `tests/WebAPITemplate.Application.Tests`, validando regras de negócios e os Serviços de domínio (`UserServiceTests`) com bibliotecas como `xUnit`.
+- Para executar os testes via terminal: `dotnet test`

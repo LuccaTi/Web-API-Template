@@ -1,7 +1,9 @@
-﻿namespace WebAPITemplate.Application.Interfaces.Clients;
+﻿using WebAPITemplate.Application.Models;
+
+namespace WebAPITemplate.Application.Interfaces.Clients;
 
 public interface IApiClient
 {
-    public Task<List<object>> GetAllAsync();
-    public Task<object> GetByIdAsync(long id);
+    public Task<IEnumerable<UserModel>> GetAllAsync();
+    public Task<UserModel?> GetByIdAsync(long id);
 }
