@@ -13,18 +13,39 @@ public class UserServiceTests
 {
     private readonly Mock<IApiClient> _mockApiClient;
     private readonly Mock<ILogger<UserService>> _mockLogger;
-    private readonly Mock<IValidator<GetUserByIdRequestDto>> _mockValidator;
+    private readonly Mock<IValidator<GetUserByIdRequestDto>> _mockGetValidator;
     private readonly UserService _sut; // SUT = System Under Test.
 
     public UserServiceTests()
     {
         _mockApiClient = new Mock<IApiClient>();
         _mockLogger = new Mock<ILogger<UserService>>();
-        _mockValidator = new Mock<IValidator<GetUserByIdRequestDto>>();
+        _mockGetValidator = new Mock<IValidator<GetUserByIdRequestDto>>();
 
         MappingConfig.RegisterMappings();
 
-        _sut = new UserService(_mockLogger.Object, _mockApiClient.Object, _mockValidator.Object);
+        _sut = new UserService(_mockLogger.Object, _mockApiClient.Object, _mockGetValidator.Object);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WhenOperationIsCancelled_ShouldThrowTaskCancelledException()
+    {
+        // 1.ARRANGE
+        using var cts = new CancellationTokenSource();
+        var cancellationToken = cts.Token;
+
+        _mockApiClient.Setup(client => client.GetAllAsync(cancellationToken))
+            .ThrowsAsync(new OperationCanceledException(cancellationToken));
+
+        cts.Cancel();
+
+        // 2.ACT & 3.ASSERT
+        var exception = await Assert.ThrowsAsync<OperationCanceledException>(
+            () => _sut.GetAllAsync(cancellationToken));
+
+        _mockApiClient.Verify(
+            client => client.GetAllAsync(It.Is<CancellationToken>(ct => ct == cancellationToken)),
+            Times.Once);
     }
 
     [Fact]
@@ -40,16 +61,18 @@ public class UserServiceTests
             Email = "test@test.com"
         };
 
-        _mockValidator
+        var cancellationToken = CancellationToken.None;
+
+        _mockGetValidator
             .Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
         _mockApiClient
-            .Setup(client => client.GetByIdAsync(request.Id))
+            .Setup(client => client.GetByIdAsync(request.Id, cancellationToken))
             .ReturnsAsync(mockUserModel);
 
         // 2.ACT
-        var result = await _sut.GetByIdAsync(request);
+        var result = await _sut.GetByIdAsync(request, cancellationToken);
 
         // 3.ASSERT
         Assert.NotNull(result);
@@ -57,7 +80,7 @@ public class UserServiceTests
         Assert.Equal(mockUserModel.Name, result.FullName);
         Assert.Equal(mockUserModel.Email, result.EmailAddress);
 
-        _mockApiClient.Verify(client => client.GetByIdAsync(1), Times.Once);
+        _mockApiClient.Verify(client => client.GetByIdAsync(1, cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -73,15 +96,17 @@ public class UserServiceTests
 
         var invalidResult = new FluentValidation.Results.ValidationResult(validationFailures);
 
-        _mockValidator
+        var cancellationToken = CancellationToken.None;
+
+        _mockGetValidator
             .Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(invalidResult);
 
         // 2.ACT & 3.ASSERT
-        var exception = await Assert.ThrowsAsync<ValidationException>(() => _sut.GetByIdAsync(request));
+        var exception = await Assert.ThrowsAsync<ValidationException>(() => _sut.GetByIdAsync(request, cancellationToken));
 
         Assert.NotEmpty(exception.Errors);
 
-        _mockApiClient.Verify(client => client.GetByIdAsync(It.IsAny<long>()), Times.Never);
+        _mockApiClient.Verify(client => client.GetByIdAsync(It.IsAny<long>(), cancellationToken), Times.Never);
     }
 }

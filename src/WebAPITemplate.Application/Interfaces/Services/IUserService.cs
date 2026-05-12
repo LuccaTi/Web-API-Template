@@ -5,6 +5,6 @@ namespace WebAPITemplate.Application.Interfaces.Services;
 
 public interface IUserService
 {
-    public Task<IEnumerable<UserResponseDto>> GetAllAsync();
-    public Task<UserResponseDto> GetByIdAsync(GetUserByIdRequestDto request);
+    public Task<IEnumerable<UserResponseDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    public Task<UserResponseDto> GetByIdAsync(GetUserByIdRequestDto request, CancellationToken cancellationToken = default);
 }

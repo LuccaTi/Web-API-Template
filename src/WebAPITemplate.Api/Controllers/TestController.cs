@@ -16,18 +16,18 @@ namespace APITemplate.Host.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
         {
-            var message = await _service.GetAllAsync();
+            var message = await _service.GetAllAsync(cancellationToken);
             return Ok(message);
 
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(long id)
+        public async Task<IActionResult> GetByIdAsync(long id, CancellationToken cancellationToken)
         {
             var request = new GetUserByIdRequestDto { Id = id };
-            var message = await _service.GetByIdAsync(request);
+            var message = await _service.GetByIdAsync(request, cancellationToken);
             return Ok(message);
         }
     }

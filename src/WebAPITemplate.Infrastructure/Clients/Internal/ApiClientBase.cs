@@ -15,23 +15,23 @@ namespace WebAPITemplate.Infrastructure.Clients.Internal
             _logger = logger;
         }
 
-        protected async Task<List<T>> GetAllAsync<T>(string endpoint)
+        protected async Task<List<T>> GetAllAsync<T>(string endpoint, CancellationToken cancellationToken = default)
         {
             _logger.LogDebug($"{_className} - Calling endpoint: {_httpClient.BaseAddress + endpoint}");
-            var response = await _httpClient.GetAsync(endpoint);
+            var response = await _httpClient.GetAsync(endpoint, cancellationToken);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<List<T>>();
+            var result = await response.Content.ReadFromJsonAsync<List<T>>(cancellationToken);
             _logger.LogDebug($"{_className} - Request Success!");
             return result ?? new List<T>();
         }
 
-        protected async Task<T?> GetByIdAsync<T>(string endpoint)
+        protected async Task<T?> GetByIdAsync<T>(string endpoint, CancellationToken cancellationToken = default)
         {
             _logger.LogDebug($"{_className} - Calling endpoint: {_httpClient.BaseAddress + endpoint}");
-            var response = await _httpClient.GetAsync(endpoint);
+            var response = await _httpClient.GetAsync(endpoint, cancellationToken);
             response.EnsureSuccessStatusCode();
             _logger.LogDebug($"{_className} - Request Success!");
-            return await response.Content.ReadFromJsonAsync<T>();
+            return await response.Content.ReadFromJsonAsync<T>(cancellationToken);
         }
     }
 }

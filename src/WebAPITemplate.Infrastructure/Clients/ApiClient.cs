@@ -15,14 +15,14 @@ namespace WebAPITemplate.Infrastructure.Clients
             _logger = logger;
         }
 
-        public async Task<IEnumerable<UserModel>> GetAllAsync()
+        public async Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await base.GetAllAsync<UserModel>("users");
+            return await base.GetAllAsync<UserModel>("users", cancellationToken);
         }
 
-        public async Task<UserModel?> GetByIdAsync(long id)
+        public async Task<UserModel?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return await base.GetByIdAsync<UserModel>($"users/{id}");
+            return await base.GetByIdAsync<UserModel>($"users/{id}", cancellationToken);
         }
     }
 }

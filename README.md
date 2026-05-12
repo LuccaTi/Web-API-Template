@@ -23,10 +23,10 @@ Endpoint de exemplo disponível:
 O projeto divide suas responsabilidades da seguinte forma:
 
 - `src/WebAPITemplate.Api`:
-  - **Responsabilidade**: Camada de Apresentação e ponto de entrada (`Program.cs`, `.exe`). Centraliza a injeção de dependências, registra middlewares (ex: `ExceptionHandlerMiddleware` preparado para falhas de validação fluente) e expõe os endpoints via Controllers. Usa os projetos Application e Infrastructure como referência.
+  - **Responsabilidade**: Camada de Apresentação e ponto de entrada (`Program.cs`, `.exe`). Centraliza a injeção de dependências, registra middlewares (ex: `ExceptionHandlerMiddleware` preparado para falhas de validação fluente, customização de log levels e cancelamento HTTP 499) e expõe os endpoints via Controllers com suporte contínuo a `CancellationToken`. Usa os projetos Application e Infrastructure como referência.
 
 - `src/WebAPITemplate.Application`:
-  - **Responsabilidade**: Casos de uso da aplicação. Contém abstrações de serviços, clientes externos, Mappers (`Mapster`), regras de validação (`FluentValidation`) e os DTOs de transporte que fluem de e para a API. Usa o projeto Domain como referência.
+  - **Responsabilidade**: Casos de uso da aplicação. Contém abstrações de serviços, clientes externos, Mappers (`Mapster`), regras e extensões de validação (`FluentValidation`) e os DTOs de transporte que fluem de e para a API. Usa o projeto Domain como referência.
 
 - `src/WebAPITemplate.Domain`:
   - **Responsabilidade**: Entidades de núcleo e regras de negócio absolutas, além das exceções de uso geral (`NotFoundException`, `ConflictException`, etc).
