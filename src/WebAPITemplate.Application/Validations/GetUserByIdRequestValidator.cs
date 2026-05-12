@@ -13,7 +13,7 @@ namespace WebAPITemplate.Application.Validations
         public GetUserByIdRequestValidator()
         {
             RuleFor(request => request.Id)
-                .NotEmpty().WithMessage("Id is mandatory.")
+                .NotEmpty().WithMessage("Id is required.")
                 .GreaterThan(0).WithMessage("Id must be greater than zero.");
         }
     }

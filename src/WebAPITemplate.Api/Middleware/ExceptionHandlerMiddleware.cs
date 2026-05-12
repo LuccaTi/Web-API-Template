@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.Json;
 using FluentValidation;
 
-namespace APITemplate.Host.Middleware
+namespace WebAPITemplate.Api.Middleware
 {
     public class ExceptionHandlerMiddleware
     {
@@ -26,7 +26,7 @@ namespace APITemplate.Host.Middleware
             {
                 var statusCode = HttpStatusCode.InternalServerError;
                 var message = "An internal server error has occured.";
-                IEnumerable<string>? errors = null;
+                object? errors = null;
                 var logLevel = LogLevel.Error;
 
                 if (ex is OperationCanceledException)
@@ -35,11 +35,16 @@ namespace APITemplate.Host.Middleware
                     message = "Client closed the request.";
                     logLevel = LogLevel.Information;
                 }
-                else if (ex is ValidationException validationException)
+                else if (ex is FluentValidation.ValidationException validationException)
                 {
                     statusCode = HttpStatusCode.BadRequest;
                     message = "One or more validation errors occurred.";
-                    errors = validationException.Errors.Select(e => e.ErrorMessage);
+                    errors = validationException.Errors
+                        .GroupBy(e => e.PropertyName)
+                        .ToDictionary(
+                            g => g.Key,
+                            g => g.Select(e => e.ErrorMessage).ToArray()
+                        );
                     logLevel = LogLevel.Warning;
                 }
                 else if (ex is HttpRequestException httpRequestException)

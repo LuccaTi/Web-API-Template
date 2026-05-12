@@ -27,6 +27,7 @@ namespace WebAPITemplate.Application.Services
 
         public async Task<IEnumerable<UserResponseDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
+            await Task.Delay(10000, cancellationToken);
             _logger.LogDebug("GetAllAsync");
             var userModels = await _apiClient.GetAllAsync(cancellationToken);
             return userModels.Adapt<IEnumerable<UserResponseDto>>();
