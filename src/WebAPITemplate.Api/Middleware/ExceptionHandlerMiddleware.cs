@@ -80,7 +80,7 @@ namespace APITemplate.Host.Middleware
 
                 var jsonOptions = new JsonSerializerOptions { DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull };
 
-                var jsonResponse = JsonSerializer.Serialize(response);
+                var jsonResponse = JsonSerializer.Serialize(response, jsonOptions);
                 await context.Response.WriteAsync(jsonResponse);
             }
         }
