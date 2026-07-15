@@ -12,7 +12,7 @@ using WebAPITemplate.Application.Mappings;
 using FluentValidation;
 using WebAPITemplate.Application.Validations;
 
-namespace APITemplate.Host
+namespace WebAPITemplate.Api
 {
     public class Program
     {

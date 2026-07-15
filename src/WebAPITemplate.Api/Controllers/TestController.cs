@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebAPITemplate.Application.DTOs.Requests;
 
-namespace APITemplate.Host.Controllers
+namespace WebAPITemplate.Api.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
